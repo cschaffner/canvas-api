@@ -141,21 +141,21 @@ def mySort(s):
 
 
 def main():
-    InfTheory = canvas.get_course(2205)
+    ModCrypto = canvas.get_course(10514)
 
-    InfTheory.users = {}
-    users = InfTheory.get_users()
+    ModCrypto.users = {}
+    users = ModCrypto.get_users()
     for user in users:
-        InfTheory.users[user.id] = user
+        ModCrypto.users[user.id] = user
 
-    group_categories = InfTheory.get_group_categories()
+    group_categories = ModCrypto.get_group_categories()
 
     for group_category in group_categories:
-        if group_category.name == 'Last 4 weeks':
+        if group_category.name == 'First 3 Weeks':
             group_category_id = group_category.id
             break
 
-    teams = InfTheory.get_groups()
+    teams = ModCrypto.get_groups()
     relevant_teams = []
     for team in teams:
         if team.group_category_id == group_category_id:
@@ -163,13 +163,13 @@ def main():
             team.submissions = []
             relevant_teams.append(team)
 
-    team_quiz_5 = InfTheory.get_assignment(40213)
-    submissions = team_quiz_5.get_submissions(grouped=True)
+    team_quiz_1 = ModCrypto.get_assignment(72424)
+    submissions = team_quiz_1.get_submissions(grouped=True)
     for submission in submissions:
         # if submission.workflow_state == 'graded':
-        team = get_team_of_user(submission.user_id, relevant_teams, InfTheory)
+        team = get_team_of_user(submission.user_id, relevant_teams, ModCrypto)
         if team is not None:
-            submission.user = InfTheory.users[submission.user_id]
+            submission.user = ModCrypto.users[submission.user_id]
             team.submissions.append(submission)
 
     # sort submissions per team by finished_at
@@ -177,7 +177,7 @@ def main():
         team.submissions = sorted(team.submissions, key=lambda subm: mySort(subm.submitted_at))
 
 
-    assign_same_grade(relevant_teams, team_quiz_5, dry_run=True, be_nice=False)
+    assign_same_grade(relevant_teams, team_quiz_1, dry_run=True, be_nice=False)
 
     return True
 
