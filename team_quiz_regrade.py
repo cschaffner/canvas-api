@@ -177,7 +177,7 @@ def main():
         team.submissions = sorted(team.submissions, key=lambda subm: mySort(subm.submitted_at))
 
 
-    assign_same_grade(relevant_teams, team_quiz_5, dry_run=True, be_nice=False)
+    assign_same_grade(relevant_teams, team_quiz_5, dry_run=False, be_nice=False)
 
     return True
 

@@ -143,22 +143,22 @@ def mySort(s):
 
 
 def main():
-    ModCrypto = canvas.get_course(10514)
+    Course = canvas.get_course(10933)
 
-    ModCrypto.users = {}
-    users = ModCrypto.get_users()
+    Course.users = {}
+    users = Course.get_users()
     for user in users:
-        ModCrypto.users[user.id] = user
+        Course.users[user.id] = user
 
-    group_categories = ModCrypto.get_group_categories()
+    group_categories = Course.get_group_categories()
 
     for group_category in group_categories:
-        # if group_category.name == 'First 3 Weeks':
-        if group_category.name == 'Last 4 Weeks':
+        if group_category.name == 'First 3 Weeks':
+        # if group_category.name == 'Last 4 Weeks':
             group_category_id = group_category.id
             break
 
-    teams = ModCrypto.get_groups()
+    teams = Course.get_groups()
     relevant_teams = []
     for team in teams:
         if team.group_category_id == group_category_id:
@@ -166,27 +166,26 @@ def main():
             team.submissions = []
             relevant_teams.append(team)
 
-    for assignment in ModCrypto.get_assignments():
+    for assignment in Course.get_assignments():
         if 'Team' in assignment.name:
             print(assignment.id, assignment.name)
 
+    team_quiz_1 = Course.get_assignment(72713)
+    team_quiz_2 = Course.get_assignment(72724)
+    team_quiz_3 = Course.get_assignment(72732)
+    team_quiz_4 = Course.get_assignment(72739)
+    team_quiz_5 = Course.get_assignment(72746)
+    team_quiz_6 = Course.get_assignment(72756)
+    team_quiz_7 = Course.get_assignment(72761)
 
-    # team_quiz_1 = ModCrypto.get_assignment(72424)  https://canvas.uva.nl/courses/10514/assignments/72406
-    # team_quiz_2= ModCrypto.get_assignment(72406)
-    # team_quiz_3 = ModCrypto.get_assignment(72411)   #https://canvas.uva.nl/courses/10514/assignments/72411
-    # team_quiz_4 = ModCrypto.get_assignment(72415)   #https://canvas.uva.nl/courses/10514/assignments/72415
-    team_quiz_5 = ModCrypto.get_assignment(72426)   #https://canvas.uva.nl/courses/10514/assignments/72426
-    team_quiz_6 = ModCrypto.get_assignment(72408)
-    team_quiz_7 = ModCrypto.get_assignment(72409)
-
-    team_quiz = team_quiz_7
+    team_quiz = team_quiz_1
 
     submissions = team_quiz.get_submissions(grouped=True)
     for submission in submissions:
         # if submission.workflow_state == 'graded':
-        team = get_team_of_user(submission.user_id, relevant_teams, ModCrypto)
+        team = get_team_of_user(submission.user_id, relevant_teams, Course)
         if team is not None:
-            submission.user = ModCrypto.users[submission.user_id]
+            submission.user = Course.users[submission.user_id]
             team.submissions.append(submission)
 
     # sort submissions per team by finished_at
@@ -194,7 +193,7 @@ def main():
         team.submissions = sorted(team.submissions, key=lambda subm: mySort(subm.submitted_at))
 
 
-    assign_same_grade(relevant_teams, team_quiz, dry_run=False, be_nice=False, ignore_list=[])
+    assign_same_grade(relevant_teams, team_quiz, dry_run=True, be_nice=False, ignore_list=[])
 
     return True
 
