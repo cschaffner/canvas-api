@@ -178,7 +178,7 @@ def main():
     team_quiz_6 = Course.get_assignment(72756)
     team_quiz_7 = Course.get_assignment(72761)
 
-    team_quiz = team_quiz_1
+    team_quiz = team_quiz_2
 
     submissions = team_quiz.get_submissions(grouped=True)
     for submission in submissions:
@@ -193,7 +193,7 @@ def main():
         team.submissions = sorted(team.submissions, key=lambda subm: mySort(subm.submitted_at))
 
 
-    assign_same_grade(relevant_teams, team_quiz, dry_run=True, be_nice=False, ignore_list=[])
+    assign_same_grade(relevant_teams, team_quiz, dry_run=False, be_nice=False, ignore_list=[])
 
     return True
 
