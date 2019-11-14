@@ -4,6 +4,7 @@
 import pickle
 from pprint import pprint
 from datetime import datetime
+import argparse
 
 # Import the Canvas class
 from canvasapi import Canvas
@@ -20,6 +21,13 @@ API_URL = "https://canvas.uva.nl"
 
 # Initialize a new Canvas object
 canvas = Canvas(API_URL, TOKEN)
+
+# Add parser and explanation for command-line arguments
+parser = argparse.ArgumentParser(description="Regrade a team quiz by assigning the grade from one team member to all team members.")
+parser.add_argument('quiz',type=int,help='number to indicate which team quiz to regrade (1--7)')
+parser.add_argument('-d','--dry_run',action='store_true',help='do a dry run (compute grades but do not upload them)')
+parser.add_argument('-n','--nice',action='store_true', help='be nice by only increasing a student\'s grade')
+parser.add_argument('-i','--ignore',nargs='*',default='[]',help='type all student names within quotes, separated by spaces')
 
 
 def assign_same_grade(teams, assignment, dry_run=False, be_nice=False, ignore_list=[]):
@@ -143,6 +151,8 @@ def mySort(s):
 
 
 def main():
+    options = parser.parse_args()
+
     Course = canvas.get_course(10933)
 
     Course.users = {}
@@ -151,10 +161,9 @@ def main():
         Course.users[user.id] = user
 
     group_categories = Course.get_group_categories()
-
+    group_phase = "First 3 Weeks" if options.quiz <= 3 else "Last 4 Weeks"
     for group_category in group_categories:
-        if group_category.name == 'First 3 Weeks':
-        # if group_category.name == 'Last 4 Weeks':
+        if group_category.name == group_phase:
             group_category_id = group_category.id
             break
 
@@ -170,16 +179,9 @@ def main():
         if 'Team' in assignment.name:
             print(assignment.id, assignment.name)
 
-    team_quiz_1 = Course.get_assignment(72713)
-    team_quiz_2 = Course.get_assignment(72724)
-    team_quiz_3 = Course.get_assignment(72732)
-    team_quiz_4 = Course.get_assignment(72739)
-    team_quiz_5 = Course.get_assignment(72746)
-    team_quiz_6 = Course.get_assignment(72756)
-    team_quiz_7 = Course.get_assignment(72761)
-
-    team_quiz = team_quiz_2
-
+    #Team quiz ids for assignments 1 through 7 (in that order)
+    team_quizzes = list(map(Course.get_assignment, [72713,72724,72732,72739,72746,72756,72761]))
+    team_quiz = team_quizzes[options.quiz-1]
     submissions = team_quiz.get_submissions(grouped=True)
     for submission in submissions:
         # if submission.workflow_state == 'graded':
@@ -193,7 +195,7 @@ def main():
         team.submissions = sorted(team.submissions, key=lambda subm: mySort(subm.submitted_at))
 
 
-    assign_same_grade(relevant_teams, team_quiz, dry_run=False, be_nice=False, ignore_list=[])
+    assign_same_grade(relevant_teams, team_quiz, dry_run=options.dry_run, be_nice=options.nice, ignore_list=options.ignore)
 
     return True
 
@@ -233,4 +235,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
