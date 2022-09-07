@@ -153,7 +153,7 @@ def mySort(s):
 def main():
     options = parser.parse_args()
 
-    Course = canvas.get_course(10933)
+    Course = canvas.get_course(32076)
 
     Course.users = {}
     users = Course.get_users()
@@ -180,7 +180,7 @@ def main():
             print(assignment.id, assignment.name)
 
     #Team quiz ids for assignments 1 through 7 (in that order)
-    team_quizzes = list(map(Course.get_assignment, [72713,72724,72732,72739,72746,72756,72761]))
+    team_quizzes = list(map(Course.get_assignment, [353402,353391,353390,353401,353395,353381,353400]))
     team_quiz = team_quizzes[options.quiz-1]
     submissions = team_quiz.get_submissions(grouped=True)
     for submission in submissions:
